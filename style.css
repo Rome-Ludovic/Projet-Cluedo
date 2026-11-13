@@ -1,0 +1,34 @@
+body {
+    margin: 0;
+    background: url("images/background-acc.jpg") center / cover no-repeat fixed;
+}
+
+.entete {
+    display: flex;
+    align-items: stretch;
+    gap: 32px;
+    height: 64px;
+    padding-right: 32px;
+    background: #ff4625cb;
+}
+.entete a { text-decoration: none; }
+
+.logo {
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    background: #216fff;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.entete nav { display: flex; gap: 24px; }
+.entete nav a {
+    display: flex;
+    align-items: center;
+    color: #c9c4e6;
+    border-bottom: 2px solid transparent;
+}
+.entete nav a:hover { color: #fff; }
+.entete nav a.actif { color: #fff; border-bottom-color: #a794ff; }
