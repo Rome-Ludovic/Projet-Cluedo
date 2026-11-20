@@ -1,3 +1,35 @@
+<?php
+session_start();
+ 
+$db = new PDO('sqlite:cluedo.db');
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+ 
+$personnages = $db->query("SELECT * FROM personnages")->fetchAll(PDO::FETCH_ASSOC);
+$armes = $db->query("SELECT * FROM armes")->fetchAll(PDO::FETCH_ASSOC);
+$pieces = $db->query("SELECT * FROM pieces")->fetchAll(PDO::FETCH_ASSOC);
+ 
+if (isset($_GET['nouvelle_partie'])) {
+    unset($_SESSION['crime']);
+    header('Location: jeu.php');
+    exit;
+}
+ 
+if (!isset($_SESSION['crime'])) {
+    $person_coupable = $personnages[random_int(0, count($personnages) - 1)];
+    $arme_coupable   = $armes[random_int(0, count($armes) - 1)];
+    $piece_coupable  = $pieces[random_int(0, count($pieces) - 1)];
+ 
+    $_SESSION['crime'] = [
+        $person_coupable['nom_personnage'],
+        $arme_coupable['nom_arme'],
+        $piece_coupable['nom_piece']
+    ];
+}
+ 
+$crime = $_SESSION['crime'];
+$enquete = [];
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>

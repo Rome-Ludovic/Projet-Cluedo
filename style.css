@@ -18,17 +18,8 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-}
-
-/* Images spécifiques par page */
-body.page-index {
     background-image: url("images/fonds/accueil.png");
 }
-
-body.page-regles {
-    background-image: url("images/fonds/regles.png");
-}
-
 
 .entete {
     display: flex;
