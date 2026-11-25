@@ -1,3 +1,55 @@
+<?php
+$sqlite = new SQLite3('cluedo.db');
+
+function tout_lire(SQLite3Result $resultat): array
+{
+    $lignes = [];
+    while ($ligne = $resultat->fetchArray(SQLITE3_ASSOC)) {
+        $lignes[] = $ligne;
+    }
+    return $lignes;
+}
+
+function h($texte): string
+{
+    return htmlspecialchars((string) $texte);
+}
+
+$personnages = tout_lire($sqlite->query('SELECT * FROM personnages ORDER BY id_personnage'));
+$armes       = tout_lire($sqlite->query('SELECT * FROM armes ORDER BY id_arme'));
+$pieces      = tout_lire($sqlite->query('SELECT * FROM pieces ORDER BY id_piece'));
+
+
+$sql  = 'SELECT p.nom_piece, adj.nom_piece AS voisine ';
+$sql .= 'FROM pieces AS p INNER JOIN portes ';
+$sql .= 'ON portes.id_piece1 = p.id_piece OR portes.id_piece2 = p.id_piece ';
+$sql .= 'INNER JOIN pieces AS adj ';
+$sql .= 'ON (adj.id_piece = portes.id_piece1 OR adj.id_piece = portes.id_piece2) ';
+$sql .= 'AND adj.id_piece != p.id_piece ';
+$sql .= 'ORDER BY p.nom_piece, adj.nom_piece';
+
+$voisines = [];
+foreach ($pieces as $p) {
+    $voisines[$p['nom_piece']] = [];
+}
+foreach (tout_lire($sqlite->query($sql)) as $ligne) {
+    $voisines[$ligne['nom_piece']][] = $ligne['voisine'];
+}
+
+$nb_personnages = count($personnages);
+$nb_armes       = count($armes);
+$nb_pieces      = count($pieces);
+$nb_cartes      = $nb_personnages + $nb_armes + $nb_pieces;
+$nb_a_distribuer = $nb_cartes - 3;
+
+// Exemple d'hypothèse tiré au hasard
+$ex_personnage = $personnages[random_int(0, $nb_personnages - 1)]['nom_personnage'];
+$ex_arme       = $armes[random_int(0, $nb_armes - 1)]['nom_arme'];
+$ex_piece      = $pieces[random_int(0, $nb_pieces - 1)]['nom_piece'];
+
+$sqlite->close();
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,9 +58,8 @@
     <link rel="icon" type="image/png" href="images/icone.png">
     <title>Règles – Projet Cluedo</title>
     <link rel="stylesheet" href="style.css">
-    <style>body { background-image: url("images/fonds/regles.png"); }</style>
 </head>
-<body>
+<body class="regles">
 <header class="entete">
     <a class="logo" href="index.php">Projet Cluedo</a>
     <nav>
@@ -18,140 +69,135 @@
 </header>
 
 <main class="container">
-    <div class="card">
+    <div class="card vintage-grid">
 
-		<h1>CLUEDO – Règles du jeu</h1>
+        <h1>CLUEDO – Règles du jeu</h1>
 
-		<h2>Introduction</h2>
-		<p>
-			Le docteur Lenoir a été assassiné dans sa villa.
-			Les joueurs doivent résoudre le mystère en découvrant
-			le meurtrier, l'arme utilisée et le lieu du crime.
-		</p>
+        <h2>Introduction</h2>
+        <p>
+            Le docteur Lenoir a été assassiné dans sa villa. Les joueurs
+            sont des détectives : ils doivent découvrir <strong>qui</strong>
+            est le meurtrier, <strong>avec quelle arme</strong> et
+            <strong>dans quelle pièce</strong> le crime a eu lieu.
+        </p>
 
-		<h2>1. Le matériel</h2>
+        <h2>1. Le matériel</h2>
 
-		<h3>Les 6 personnages</h3>
-		<ul>
-			<li>Colonel Moutarde</li>
-			<li>Docteur Olive</li>
-			<li>Professeur Violet</li>
-			<li>Madame Pervenche</li>
-			<li>Mademoiselle Rose</li>
-			<li>Madame Leblanc</li>
-		</ul>
+        <h3>Les <?= $nb_personnages ?> suspects</h3>
+        <ul>
+            <?php foreach ($personnages as $p): ?>
+                <li><?= h($p['nom_personnage']) ?></li>
+            <?php endforeach; ?>
+        </ul>
 
-		<h3>Les 6 armes</h3>
-		<ul>
-			<li>Poignard</li>
-			<li>Chandelier</li>
-			<li>Revolver</li>
-			<li>Corde</li>
-			<li>Matraque</li>
-			<li>Clé anglaise</li>
-		</ul>
+        <h3>Les <?= $nb_armes ?> armes</h3>
+        <ul>
+            <?php foreach ($armes as $a): ?>
+                <li><?= h($a['nom_arme']) ?></li>
+            <?php endforeach; ?>
+        </ul>
 
-		<h3>Les autres éléments</h3>
-		<ul>
-			<li>21 cartes</li>
-			<li>2 dés</li>
-			<li>1 étui secret</li>
-			<li>1 carnet de notes par joueur</li>
-		</ul>
+        <h3>Les <?= $nb_pieces ?> pièces de la villa</h3>
+        <ul>
+            <?php foreach ($pieces as $p): ?>
+                <li><?= h($p['nom_piece']) ?></li>
+            <?php endforeach; ?>
+        </ul>
 
-		<h2>2. Préparation du jeu</h2>
-		<ol>
-			<li>Placez les six pions sur leurs cases de départ.</li>
-			<li>Placez l'étui secret sur la case X.</li>
-			<li>Séparez les cartes en trois catégories : suspects, armes et lieux.</li>
-			<li>Mélangez séparément les trois paquets.</li>
-			<li>Placez secrètement une carte de chaque catégorie dans l'étui.</li>
-			<li>Mélangez les cartes restantes et distribuez-les aux joueurs.</li>
-		</ol>
+        <p>
+            Cela fait <strong><?= $nb_cartes ?> cartes</strong>
+            (<?= $nb_personnages ?> suspects + <?= $nb_armes ?> armes
+            + <?= $nb_pieces ?> pièces), plus un carnet de notes par joueur.
+        </p>
 
-		<h2>3. Distribution des cartes</h2>
-		<ol>
-			<li>Chaque joueur lance les dés.</li>
-			<li>Le joueur ayant obtenu le résultat le plus élevé distribue les cartes.</li>
-			<li>Les cartes sont distribuées une par une, face cachée.</li>
-			<li>Chaque joueur garde ses cartes secrètes.</li>
-		</ol>
+        <h2>2. Préparation</h2>
+        <ol>
+            <li>Séparez les cartes en trois paquets : suspects, armes et pièces.</li>
+            <li>Mélangez chaque paquet séparément.</li>
+            <li>Tirez au hasard <strong>une carte de chaque paquet</strong> et glissez-les, sans les regarder, dans l'enveloppe du crime : ce sont le coupable, l'arme et le lieu du crime.</li>
+            <li>Mélangez les <strong><?= $nb_a_distribuer ?> cartes restantes</strong> et distribuez-les une par une, face cachée, à tous les joueurs.</li>
+            <li>Chaque joueur regarde ses cartes sans les montrer : ce sont des éléments <em>innocents</em>, qui ne font pas partie du crime.</li>
+        </ol>
 
-		<h2>4. Les déplacements</h2>
-		<ul>
-			<li>Le joueur lance les deux dés et avance du nombre de cases indiqué.</li>
-			<li>Les déplacements se font horizontalement ou verticalement.</li>
-			<li>Les déplacements en diagonale sont interdits.</li>
-			<li>Il est interdit de traverser une case occupée.</li>
-			<li>Les passages secrets permettent de rejoindre certaines pièces.</li>
-		</ul>
+        <h2>3. Se déplacer dans la villa</h2>
+        <p>
+            La villa est composée de <?= $nb_pieces ?> pièces reliées entre elles
+            par des portes. À son tour, un joueur peut passer dans une pièce
+            voisine, c'est-à-dire reliée par une porte à la pièce où il se trouve.
+        </p>
 
-		<h2>5. Formuler une hypothèse</h2>
-		<p>
-			Lorsqu'un joueur entre dans une pièce, il peut formuler
-			une hypothèse en désignant :
-		</p>
-		<ol>
-			<li>Un suspect.</li>
-			<li>Une arme.</li>
-			<li>La pièce dans laquelle il se trouve.</li>
-		</ol>
+        <table class="portes">
+            <thead>
+                <tr><th>Pièce</th><th>Portes vers</th></tr>
+            </thead>
+            <tbody>
+                <?php foreach ($voisines as $nom => $liste): ?>
+                    <tr>
+                        <td><strong><?= h($nom) ?></strong></td>
+                        <td><?= h(implode(', ', $liste)) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
 
-		<p>
-			Exemple : « Je pense que Madame Leblanc a commis le meurtre
-			dans le Bureau avec le Chandelier ! »
-		</p>
+        <h2>4. Formuler une hypothèse</h2>
+        <p>
+            Quand un joueur est dans une pièce, il peut formuler une hypothèse
+            en nommant :
+        </p>
+        <ol>
+            <li>un suspect ;</li>
+            <li>une arme ;</li>
+            <li>la pièce <strong>où il se trouve</strong>.</li>
+        </ol>
+        <p>
+            Exemple : « Je pense que <?= h($ex_personnage) ?> a commis le meurtre
+            dans la pièce « <?= h($ex_piece) ?> » avec l'arme « <?= h($ex_arme) ?> » ! »
+        </p>
 
-		<h3>Interroger les autres joueurs</h3>
-		<ol>
-			<li>Le joueur situé à gauche est interrogé en premier.</li>
-			<li>S'il possède une carte correspondant à l'hypothèse,
-				il doit en montrer une secrètement.</li>
-			<li>S'il ne possède aucune carte correspondante,
-				le joueur suivant est interrogé.</li>
-			<li>Les interrogatoires continuent jusqu'à ce qu'une carte
-				soit montrée ou que tous les joueurs aient répondu.</li>
-		</ol>
+        <h3>Interroger les autres joueurs</h3>
+        <ol>
+            <li>Le joueur placé à gauche de celui qui fait l'hypothèse répond en premier.</li>
+            <li>S'il possède au moins une des trois cartes citées, il doit en montrer une, <strong>en secret</strong>, à celui qui a fait l'hypothèse.</li>
+            <li>S'il n'en possède aucune, c'est au joueur suivant de répondre, et ainsi de suite.</li>
+            <li>L'interrogatoire s'arrête dès qu'une carte a été montrée, ou quand tous les joueurs ont répondu sans pouvoir montrer de carte.</li>
+        </ol>
+        <p>
+            Si personne ne peut montrer de carte, et que tu n'en as aucune toi-même,
+            les trois éléments cités sont peut-être dans l'enveloppe du crime!
+        </p>
 
-		<h2>6. Prendre des notes</h2>
-		<p>Chaque joueur doit noter les informations obtenues :</p>
-		<ul>
-			<li>Les suspects éliminés.</li>
-			<li>Les armes déjà identifiées.</li>
-			<li>Les pièces qui peuvent être éliminées.</li>
-			<li>Les cartes montrées par les autres joueurs.</li>
-		</ul>
+        <h2>5. Prendre des notes</h2>
+        <p>Chaque joueur note dans son carnet :</p>
+        <ul>
+            <li>les suspects, armes et pièces qu'il a vus dans sa main ou qu'on lui a montrés (ils sont innocents) ;</li>
+            <li>les réponses données aux hypothèses des autres joueurs ;</li>
+            <li>ce qu'il en déduit, par élimination, sur le contenu de l'enveloppe.</li>
+        </ul>
 
-		<h2>7. L'accusation finale</h2>
-		<p>
-			Lorsqu'un joueur pense avoir découvert la solution,
-			il peut formuler une accusation.
-		</p>
+        <h2>6. L'accusation finale</h2>
+        <p>
+            Quand un joueur pense connaître la solution, il peut l'annoncer à son tour :
+            le suspect, l'arme et la pièce. Il regarde alors, sans les montrer, les trois
+            cartes de l'enveloppe.
+        </p>
 
-		<ol>
-			<li>Il annonce le nom du meurtrier.</li>
-			<li>Il annonce l'arme utilisée.</li>
-			<li>Il annonce le lieu du crime.</li>
-			<li>Il vérifie les trois cartes dans l'étui secret.</li>
-		</ol>
+        <h3>Si l'accusation est correcte</h3>
+        <p>Il révèle les trois cartes et remporte la partie.</p>
 
-		<h3>Si l'accusation est correcte</h3>
-		<p>Le joueur révèle les trois cartes et remporte la partie.</p>
+        <h3>Si l'accusation est fausse</h3>
+        <p>
+            Il est éliminé : il ne peut plus se déplacer ni accuser. Il reste
+            cependant dans la partie pour répondre aux hypothèses des autres joueurs.
+        </p>
 
-		<h3>Si l'accusation est fausse</h3>
-		<p>
-			Le joueur ne peut plus se déplacer, interroger ni formuler
-			d'accusation. Il reste cependant dans la partie pour
-			répondre aux hypothèses des autres joueurs.
-		</p>
+        <h2>7. Fin de la partie</h2>
+        <p>
+            Le premier joueur qui désigne correctement le suspect, l'arme et la pièce
+            du crime gagne la partie.
+        </p>
 
-		<h2>8. Fin de la partie</h2>
-		<p>
-			Le premier joueur qui identifie correctement le suspect,
-			l'arme et le lieu du crime remporte la partie.
-		</p>
-
-		<h2>Bonne enquête à tous les détectives !</h2>
+        <h2>Bonne enquête à tous les détectives !</h2>
     </div>
 </main>
 

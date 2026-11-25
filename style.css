@@ -163,10 +163,6 @@ li {
     text-decoration: underline;
 }
 
-/* =========================
-   ENCARTS
-========================= */
-
 .highlight {
     background: #f2ead7;
     border-left: 5px solid var(--gold);
@@ -180,10 +176,6 @@ li {
     border-left-color: #34864c;
 }
 
-/* =========================
-   CONCLUSION
-========================= */
-
 .conclusion {
     text-align: center;
     background: #fdfaf2;
@@ -193,10 +185,6 @@ li {
 .conclusion strong {
     color: var(--green);
 }
-
-/* =========================
-   FOOTER
-========================= */
 
 footer {
     text-align: center;
@@ -209,10 +197,6 @@ footer {
 footer p {
     margin: 5px;
 }
-
-/* =========================
-   RESPONSIVE
-========================= */
 
 @media (max-width: 600px) {
 
@@ -242,3 +226,35 @@ footer p {
         padding: 6px 0;
     }
 }
+
+body.regles { background-image: url("images/fonds/regles.png"); }
+
+.vintage-grid {
+    background-color: #f4ecd8;
+    background-image:
+        url("images/fonds/papier.svg"),
+        linear-gradient(to right, rgba(139, 115, 85, 0.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(139, 115, 85, 0.2) 1px, transparent 1px),
+        linear-gradient(to right, rgba(139, 115, 85, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(139, 115, 85, 0.35) 1px, transparent 1px);
+    background-size: 300px 300px, 20px 20px, 20px 20px, 100px 100px, 100px 100px;
+    box-shadow:
+        inset 0 0 60px rgba(139, 109, 67, 0.25),   /* paper aging */
+        inset 0 0 0 6px #f4ecd8,                    /* gap before inner line */
+        inset 0 0 0 7px rgba(90, 62, 27, 0.55),     /* inner frame line */
+        0 10px 40px rgba(0, 0, 0, 0.6),             /* page shadow */
+        0 2px 6px rgba(0, 0, 0, 0.4);
+    border: 3px solid #5a3e1b;
+    border-radius: 4px;
+    padding: 40px 48px;
+    color: #3b2f1e;
+}
+.vintage-grid h1,
+.vintage-grid h2 { color: #5a3e1b; border-bottom-color: #a98a4d; font-family: Georgia, "Times New Roman", serif; }
+.vintage-grid h3 { color: #7a5a2b; }
+
+table.portes { border-collapse: collapse; width: 100%; margin: 16px 0; }
+table.portes th,
+table.portes td { border: 1px solid rgba(139, 115, 85, 0.5); padding: 8px 12px; text-align: left; }
+table.portes th { background: rgba(139, 115, 85, 0.18); }
+    
