@@ -11,14 +11,13 @@
     --text: #292e2b;
 }
 
-/* Styles communs à toutes les pages */
 body {
     margin: 0;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-image: url("images/fonds/accueil.png");
+    background-image: url("images/fonds/fond.png");
 }
 
 .entete {
@@ -227,7 +226,6 @@ footer p {
     }
 }
 
-body.regles { background-image: url("images/fonds/regles.png"); }
 
 .vintage-grid {
     background-color: #f4ecd8;
@@ -239,10 +237,10 @@ body.regles { background-image: url("images/fonds/regles.png"); }
         linear-gradient(to bottom, rgba(139, 115, 85, 0.35) 1px, transparent 1px);
     background-size: 300px 300px, 20px 20px, 20px 20px, 100px 100px, 100px 100px;
     box-shadow:
-        inset 0 0 60px rgba(139, 109, 67, 0.25),   /* paper aging */
-        inset 0 0 0 6px #f4ecd8,                    /* gap before inner line */
-        inset 0 0 0 7px rgba(90, 62, 27, 0.55),     /* inner frame line */
-        0 10px 40px rgba(0, 0, 0, 0.6),             /* page shadow */
+        inset 0 0 60px rgba(139, 109, 67, 0.25),   /* old paper */
+        inset 0 0 0 6px #f4ecd8,                    /* gap */
+        inset 0 0 0 7px rgba(90, 62, 27, 0.55),     /* frame */
+        0 10px 40px rgba(0, 0, 0, 0.6),             /* shadow */
         0 2px 6px rgba(0, 0, 0, 0.4);
     border: 3px solid #5a3e1b;
     border-radius: 4px;
