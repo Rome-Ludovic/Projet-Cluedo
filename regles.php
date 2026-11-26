@@ -57,6 +57,7 @@ $sqlite->close();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="images/icone.png">
     <title>Règles – Projet Cluedo</title>
+    <link rel="preload" as="image" href="images/fonds/fond.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="regles">

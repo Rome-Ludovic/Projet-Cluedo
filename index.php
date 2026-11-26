@@ -13,37 +13,12 @@ function tout_lire(SQLite3Result $resultat): array
 }
 
 $personnages = tout_lire($sqlite->query('SELECT * FROM personnages'));
-$armes       = tout_lire($sqlite->query('SELECT * FROM armes'));
-$pieces      = tout_lire($sqlite->query('SELECT * FROM pieces'));
 
 if (isset($_GET['nouvelle_partie'])) {
-    unset($_SESSION['crime']);
-    header('Location: jeu.php');
+    unset($_SESSION['crime'], $_SESSION['joueur_id'], $_SESSION['piece_id']);
+    header('Location: index.php');
     exit;
 }
-
-if (!isset($_SESSION['crime'])) {
-    $_SESSION['crime'] = [
-        $personnages[random_int(0, count($personnages) - 1)]['nom_personnage'],
-        $armes[random_int(0, count($armes) - 1)]['nom_arme'],
-        $pieces[random_int(0, count($pieces) - 1)]['nom_piece'],
-    ];
-}
-
-/* ---- Pièces adjacentes à la pièce choisie ---- */
-$piece = 'Salle de billard';
-
-$sql  = 'SELECT adj.id_piece, adj.nom_piece ';
-$sql .= 'FROM pieces INNER JOIN portes ';
-$sql .= 'ON portes.id_piece1 = pieces.id_piece OR portes.id_piece2 = pieces.id_piece ';
-$sql .= 'INNER JOIN pieces AS adj ';
-$sql .= 'ON portes.id_piece1 = adj.id_piece OR portes.id_piece2 = adj.id_piece ';
-$sql .= 'WHERE adj.id_piece != pieces.id_piece ';
-$sql .= 'AND pieces.nom_piece LIKE :piece';
-
-$requete = $sqlite->prepare($sql);
-$requete->bindValue(':piece', $piece, SQLITE3_TEXT);
-$adjacentes = tout_lire($requete->execute());
 
 $sqlite->close();
 ?>
@@ -54,6 +29,7 @@ $sqlite->close();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="images/icone.png">
     <title>Accueil – Projet Cluedo</title>
+    <link rel="preload" as="image" href="images/fonds/fond.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -67,12 +43,20 @@ $sqlite->close();
 
 <main class="container">
     <div class="card">
-        <h1>Pièces adjacentes à <?= htmlspecialchars($piece) ?></h1>
-        <ul>
-            <?php foreach ($adjacentes as $adj): ?>
-                <li><?= htmlspecialchars($adj['nom_piece']) ?></li>
-            <?php endforeach; ?>
-        </ul>
+        <h1>Prêt à enquêter ?</h1>
+        <form method="post" action="jeu.php">
+            <p>
+                <label for="personnage">Choisis ton personnage :</label>
+                <select name="personnage" id="personnage" required>
+                    <?php foreach ($personnages as $p): ?>
+                        <option value="<?= (int) $p['id_personnage'] ?>">
+                            <?= htmlspecialchars($p['nom_personnage']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
+            <button type="submit">Jouer</button>
+        </form>
     </div>
 </main>
 
