@@ -112,6 +112,7 @@ $sqlite->close();
         <a href="index.php">Accueil</a>
         <a href="regles.php">Règles</a>
     </nav>
+    <a class="btn-entete" href="regles.php">Règles</a>
 </header>
 
 <main class="container">

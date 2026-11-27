@@ -20,6 +20,8 @@ if (isset($_GET['nouvelle_partie'])) {
     exit;
 }
 
+$partie_en_cours = isset($_SESSION['joueur_id'], $_SESSION['crime'], $_SESSION['piece_id']);
+
 $sqlite->close();
 ?>
 <!DOCTYPE html>
@@ -39,6 +41,9 @@ $sqlite->close();
         <a href="index.php" class="actif">Accueil</a>
         <a href="regles.php">Règles</a>
     </nav>
+    <?php if ($partie_en_cours): ?>
+        <a class="btn-entete" href="jeu.php">Retour au jeu</a>
+    <?php endif; ?>
 </header>
 
 <main class="container">

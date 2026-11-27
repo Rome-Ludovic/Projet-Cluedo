@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $sqlite = new SQLite3('cluedo.db');
 
 function tout_lire(SQLite3Result $resultat): array
@@ -47,6 +49,8 @@ $ex_personnage = $personnages[random_int(0, $nb_personnages - 1)]['nom_personnag
 $ex_arme       = $armes[random_int(0, $nb_armes - 1)]['nom_arme'];
 $ex_piece      = $pieces[random_int(0, $nb_pieces - 1)]['nom_piece'];
 
+$partie_en_cours = isset($_SESSION['joueur_id'], $_SESSION['crime'], $_SESSION['piece_id']);
+
 $sqlite->close();
 
 ?>
@@ -67,6 +71,9 @@ $sqlite->close();
         <a href="index.php">Accueil</a>
         <a href="regles.php" class="actif">Règles</a>
     </nav>
+    <?php if ($partie_en_cours): ?>
+        <a class="btn-entete" href="jeu.php">Retour au jeu</a>
+    <?php endif; ?>
 </header>
 
 <main class="container">
