@@ -47,19 +47,22 @@ $sqlite->close();
 </header>
 
 <main class="container">
-    <div class="card">
-        <h1>Prêt à enquêter ?</h1>
+    <div class="card vintage-grid accueil">
+        <h1>CLUEDO</h1>
+        <p class="sous-titre">
+            Le docteur Lenoir a été assassiné dans sa villa.<br>
+            Qui est le meurtrier, avec quelle arme et dans quelle pièce ?
+        </p>
+
         <form method="post" action="jeu.php">
-            <p>
-                <label for="personnage">Choisis ton personnage :</label>
-                <select name="personnage" id="personnage" required>
-                    <?php foreach ($personnages as $p): ?>
-                        <option value="<?= (int) $p['id_personnage'] ?>">
-                            <?= htmlspecialchars($p['nom_personnage']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
+            <label for="personnage">Choisis ton personnage</label>
+            <select name="personnage" id="personnage" required>
+                <?php foreach ($personnages as $p): ?>
+                    <option value="<?= (int) $p['id_personnage'] ?>">
+                        <?= htmlspecialchars($p['nom_personnage']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
             <button type="submit">Jouer</button>
         </form>
     </div>

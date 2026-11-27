@@ -292,4 +292,73 @@ table.portes { border-collapse: collapse; width: 100%; margin: 16px 0; }
 table.portes th,
 table.portes td { border: 1px solid rgba(139, 115, 85, 0.5); padding: 8px 12px; text-align: left; }
 table.portes th { background: rgba(139, 115, 85, 0.18); }
-    
+
+.accueil {
+    max-width: 560px;
+    margin: 70px auto;
+    text-align: center;
+}
+.accueil h1 {
+    font-size: 46px;
+    letter-spacing: 8px;
+    margin: 0 0 14px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #a98a4d;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+.accueil .sous-titre {
+    font-style: italic;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 18px 0 32px;
+}
+.accueil label {
+    display: block;
+    margin-bottom: 10px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: bold;
+    font-size: 18px;
+    color: #5a3e1b;
+}
+.accueil select {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    color: #3b2f1e;
+    background: #fbf5e4;
+    border: 2px solid #5a3e1b;
+    border-radius: 4px;
+    box-shadow: inset 0 0 8px rgba(139, 109, 67, 0.25);
+    cursor: pointer;
+}
+.accueil select:focus {
+    outline: none;
+    border-color: #c9a65b;
+    box-shadow: 0 0 10px rgba(201, 166, 91, 0.8);
+}
+.accueil button {
+    margin-top: 26px;
+    padding: 14px 54px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #f4ecd8;
+    background: linear-gradient(#7a5a2b, #5a3e1b);
+    border: 2px solid #3b2a12;
+    border-radius: 4px;
+    box-shadow:
+        inset 0 0 0 2px rgba(201, 166, 91, 0.7),
+        0 4px 10px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.accueil button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 0 0 2px #c9a65b,
+        0 0 16px rgba(201, 166, 91, 0.8),
+        0 6px 14px rgba(0, 0, 0, 0.5);
+}
